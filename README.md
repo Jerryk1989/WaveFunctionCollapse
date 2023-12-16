@@ -52,7 +52,8 @@ The problem I was trying to solve simply put is that I wanted a script to figure
 
 While looking at this issue, I went through and created some rough idea's about what things would look like (see the notepad scribbles below).  This became useful later when I went to create the rules for this forward facing building.  I started writing the code and instantly realized calling out each prefab available was kind of clunky and not much better than doing it manually.  What happens when I want to add more road variations?  I'd have to update the script with every new addition, it would be really nice if I could just drop my new prefabs into a folder and let the script figure it out.  This line of thinking got me to realize that in front of the building I just want a road.  I dont' care if it's road 1, 2, or 3.  Just as long as it's a road.  So if I could somehow group all roads with a type of road, I could then just search for all roads facing a certain direction based off the way the bulding is facing and I'd have all the available roads neighbors.  This is how grouping came about in this project
 
-<h3>In order for the grouping to work, each prefab rotation needs to have the PrefabGroupingInfo component.  Just add it to the prefab that you run through the CreateRotatedPrefabs script and it will be there on the new ones</h3>
+> [!important]
+> In order for the grouping to work, each prefab rotation needs to have the PrefabGroupingInfo component.  Just add it to the prefab that you run through the CreateRotatedPrefabs script and it will be there on the new ones
 
 ```
 corner - forward
