@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72427c5f629e450ab6227ced67ea54bb, type: 3}
   m_Name: Corner
   m_EditorClassIdentifier: 
-  groupingName: 
+  groupingName: Corner
