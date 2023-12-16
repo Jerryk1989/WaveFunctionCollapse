@@ -7,6 +7,7 @@ The solution isn't super solid, but it works pretty decently.  You just need to 
 <br />
 
 <h1>Which order should I run the scripts in</h1>
+
 1.  Run the CreateRotatePrefabs script first.   This will create the rotation prefabs.
 1.  Once you have the rotation prefabs created.  Run the CreateRotatedScriptableObjects to create the scriptable objects that have all their rotations
 
