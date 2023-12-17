@@ -22,6 +22,19 @@ namespace Wave_Function_Collapse.Scripts
             {
                 CreateScriptableObjectsButton((CreateRotatedScriptableObjects) script);
             }
+
+            if (script is WaveFunctionCollapse)
+            {
+                CreateWaveFunctionCollapseTesterButton((WaveFunctionCollapse) script);
+            }
+        }
+
+        private void CreateWaveFunctionCollapseTesterButton(WaveFunctionCollapse script)
+        {
+            if (GUILayout.Button(("Create Grid")))
+            {
+                script.TestingWaveFunctionCollapse();
+            }
         }
 
         private void CreateScriptableObjectsButton(CreateRotatedScriptableObjects script)

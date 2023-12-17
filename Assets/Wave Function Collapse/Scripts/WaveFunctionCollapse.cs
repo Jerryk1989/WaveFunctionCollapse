@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,12 +13,18 @@ namespace Wave_Function_Collapse.Scripts
         [SerializeField] private int width;
         [SerializeField] private int height;
         [SerializeField] private int offsetSize;
+        
+        private int changedWidth;
+
+        private int changedHeight;
 
         //2d array that will store collapsed tiles we can reference them later.
-        private Node[,] grid;
+        private Tile[,] grid;
 
         //All of our possible nodes
-        public List<Node> allPossibleNodes = new List<Node>();
+        public List<Tile> allPossibleNodes = new List<Tile>();
+
+        public List<GameObject> ObjectsCreated = new List<GameObject>();
         
         //List to store tile positions that need collapsing
         private List<Vector3Int> nodesToCollapse = new List<Vector3Int>();
@@ -28,12 +37,28 @@ namespace Wave_Function_Collapse.Scripts
             new Vector3Int(-10,0,0),
         };
 
+        public void TestingWaveFunctionCollapse()
+        {
+            foreach (var item in ObjectsCreated)
+            {
+                DestroyImmediate(item);
+            }
+            
+            ObjectsCreated.Clear();
+            
+            Start();
+        }
         private void Start()
         {
-            width = width * offsetSize;
-            height = height * offsetSize;
+            //Get all the cells for our grid
             
-            grid = new Node[width, height];
+            //Choose a starting cell
+            
+            //Get a random 
+            changedWidth = width * offsetSize;
+            changedHeight = height * offsetSize;
+            
+            grid = new Tile[changedWidth, changedHeight];
 
             CollapseWorld();
         }
@@ -42,45 +67,51 @@ namespace Wave_Function_Collapse.Scripts
         {
             nodesToCollapse.Clear();
 
-            nodesToCollapse.Add(new Vector3Int(width / 2,0, height / 2));
+            nodesToCollapse.Add(new Vector3Int(changedWidth / 2,0, changedHeight / 2));
 
             while (nodesToCollapse.Count > 0)
             {
                 int x = nodesToCollapse[0].x;
                 int z = nodesToCollapse[0].z;
 
-                List<Node> potentialNodes = new List<Node>(allPossibleNodes);
+                List<Tile> potentialNodes = new List<Tile>(allPossibleNodes);
 
                 CycleThroughEachNeighborNode(potentialNodes, x, z);
+
+                var prefabYAxis = grid[x, z].Prefab.transform.rotation.eulerAngles.y;
                 
-                Instantiate(grid[x, z].Prefab, new Vector3(x, 0f, z), Quaternion.identity);
-                    
+                ObjectsCreated.Add(Instantiate(grid[x, z].Prefab, new Vector3(x, 0f, z), Quaternion.Euler(0f, prefabYAxis, 0f)));
+                
                 nodesToCollapse.RemoveAt(0);
             }
         }
 
-        private void CycleThroughEachNeighborNode(List<Node> potentialNodes, int x, int z)
+        private void CycleThroughEachNeighborNode(List<Tile> potentialNodes, int x, int z)
         {
             for (int i = 0; i < nodeOffsets.Length; i++)
             {
+                // potentialNodes = new List<Tile>(allPossibleNodes);
                 Vector3Int neighborGridSpot = new Vector3Int(x + nodeOffsets[i].x, 0, z + nodeOffsets[i].z);
 
                 if (IsNeighorNodeInsideGrid(neighborGridSpot))
                 {
-                    Node neighborNode = grid[neighborGridSpot.x, neighborGridSpot.z];
-
-                    if (neighborNode != null)
-                        ReducePossibleNodeOptionsForThisNeighborNode(potentialNodes, neighborNode, i);
+                    Tile neighborTile = grid[neighborGridSpot.x, neighborGridSpot.z];
+                    
+                    
+                    if (neighborTile != null)
+                        ReducePossibleNodeOptionsForThisNeighborNode(potentialNodes, neighborTile, i);
                     else
                         if(!nodesToCollapse.Contains(neighborGridSpot))
                             nodesToCollapse.Add(neighborGridSpot);
-
+                    
+                    if(potentialNodes.Count == 0)
+                        Debug.LogError($"Just tried to add a node without a potentialNode.  NeighborNode: {neighborTile.name}.");
                     GetNodeForPlacement(potentialNodes, x, z);
                 }
             }
         }
 
-        private void GetNodeForPlacement(List<Node> potentialNodes, int x, int z)
+        private void GetNodeForPlacement(List<Tile> potentialNodes, int x, int z)
         {
             if (potentialNodes.Count < 1)
             {
@@ -94,26 +125,26 @@ namespace Wave_Function_Collapse.Scripts
             }
         }
 
-        private void ReducePossibleNodeOptionsForThisNeighborNode(List<Node> potentialNodes, Node neighborNode, int i)
+        private void ReducePossibleNodeOptionsForThisNeighborNode(List<Tile> potentialNodes, Tile neighborTile, int i)
         {
             switch (i)
             {
                 case 0:
-                    ReduceNodeOptions(potentialNodes, neighborNode.Back.CompatibleNodes);
+                    ReduceNodeOptions(potentialNodes, neighborTile.Back.CompatibleNodes);
                     break;
                 case 1:
-                    ReduceNodeOptions(potentialNodes, neighborNode.Forward.CompatibleNodes);
+                    ReduceNodeOptions(potentialNodes, neighborTile.Forward.CompatibleNodes);
                     break;
                 case 2:
-                    ReduceNodeOptions(potentialNodes, neighborNode.Left.CompatibleNodes);
+                    ReduceNodeOptions(potentialNodes, neighborTile.Left.CompatibleNodes);
                     break;
                 case 3:
-                    ReduceNodeOptions(potentialNodes, neighborNode.Right.CompatibleNodes);
+                    ReduceNodeOptions(potentialNodes, neighborTile.Right.CompatibleNodes);
                     break;
             }
         }
         
-        private void ReduceNodeOptions(List<Node> potentialNodes, List<Node> validNodes)
+        private void ReduceNodeOptions(List<Tile> potentialNodes, List<Tile> validNodes)
         {
             for (int i = potentialNodes.Count - 1; i > -1; i--)
             {
@@ -126,7 +157,7 @@ namespace Wave_Function_Collapse.Scripts
         
         private bool IsNeighorNodeInsideGrid(Vector3Int neighborNode)
         {
-            if (neighborNode.x > -1 && neighborNode.x < width && neighborNode.z > -1 && neighborNode.z < height)
+            if (neighborNode.x > -1 && neighborNode.x < changedWidth && neighborNode.z > -1 && neighborNode.z < changedHeight)
                 return true;
 
             return false;

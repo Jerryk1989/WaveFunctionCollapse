@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26c8bda2317677f4d89687da932d5597, type: 3}
+  m_Name: right-Bld_Corner
+  m_EditorClassIdentifier: 
+  Name: right-Bld_Corner
+  Prefab: {fileID: 7661712046029891250, guid: 8d0c531435d99724aa3217e019cf29f4, type: 3}
+  Forward:
+    CompatibleNodes:
+    - {fileID: 11400000, guid: 56d7c2da75e90e047b305d3e185e5094, type: 2}
+  Back:
+    CompatibleNodes:
+    - {fileID: 11400000, guid: 1b036f20caea1fd4597380aef069ce12, type: 2}
+    - {fileID: 11400000, guid: ea0dd91de2764df468d5276bd6230218, type: 2}
+    - {fileID: 11400000, guid: 453e92743185f7e44b30d1d2b30e3f05, type: 2}
+  Left:
+    CompatibleNodes:
+    - {fileID: 11400000, guid: 9f6e32cb516de304a9063a891096b18b, type: 2}
+    - {fileID: 11400000, guid: 6f6869768386a2e4fa348d7e412b3e5e, type: 2}
+    - {fileID: 11400000, guid: 1d6a759a3f19966409e4c00180d1bbba, type: 2}
+  Right:
+    CompatibleNodes:
+    - {fileID: 11400000, guid: 7842126eb7df5ea44a89372a3d99f9d1, type: 2}
