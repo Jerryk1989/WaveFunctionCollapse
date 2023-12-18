@@ -14,15 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: forward-Intersection_1
   Prefab: {fileID: 2891427874570352711, guid: 7750d9b0e5732ee4db69c2c675c0a113, type: 3}
-  Forward:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 8f90fa062b25a51489605be236e94dd3, type: 2}
-  Back:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 7842126eb7df5ea44a89372a3d99f9d1, type: 2}
-  Left:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 56d7c2da75e90e047b305d3e185e5094, type: 2}
-  Right:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 281a361fd1ed983458c8215627c63abe, type: 2}
+  North:
+  - {fileID: 11400000, guid: 8f90fa062b25a51489605be236e94dd3, type: 2}
+  South:
+  - {fileID: 11400000, guid: 7842126eb7df5ea44a89372a3d99f9d1, type: 2}
+  East:
+  - {fileID: 11400000, guid: 56d7c2da75e90e047b305d3e185e5094, type: 2}
+  West:
+  - {fileID: 11400000, guid: 281a361fd1ed983458c8215627c63abe, type: 2}

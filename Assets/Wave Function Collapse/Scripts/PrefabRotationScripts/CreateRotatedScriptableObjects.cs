@@ -447,31 +447,11 @@ namespace Wave_Function_Collapse.Scripts
             //The current node we are looking at has 4 directions.
             //For each of these directions I need to give it the list of valid nodes, not game objects.
             //This chunk just takes the game objects we have found as valid and finds the corresponding nodes.
-            List<Tile> forwardNodes = GetNodes(forwardObjects);
-            List<Tile> backNodes = GetNodes(backObjects);
-            List<Tile> rightNodes = GetNodes(rightObjects);
-            List<Tile> leftNodes = GetNodes(leftObjects);
-            
-            currentTile.Forward = new WFC_Connection()
-            {
-                CompatibleNodes = forwardNodes
-            };
-            
-            currentTile.Back = new WFC_Connection()
-            {
-                CompatibleNodes = backNodes
-            };
-            
-            currentTile.Left = new WFC_Connection()
-            {
-                CompatibleNodes = leftNodes
-            };
-            
-            currentTile.Right = new WFC_Connection()
-            {
-                CompatibleNodes = rightNodes
-            };
-            
+            currentTile.North = GetNodes(forwardObjects);
+            currentTile.South = GetNodes(backObjects);
+            currentTile.West = GetNodes(rightObjects);
+            currentTile.East = GetNodes(leftObjects);
+
             //Now we just need to save our changes for our current node (scriptable object)
             EditorUtility.SetDirty(currentTile);
             AssetDatabase.SaveAssets();

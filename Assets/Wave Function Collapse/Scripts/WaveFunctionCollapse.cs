@@ -23,7 +23,7 @@ namespace Wave_Function_Collapse.Scripts
 
         //All of our possible nodes
         public List<Tile> allPossibleNodes = new List<Tile>();
-
+        public Tile errorNode;
         public List<GameObject> ObjectsCreated = new List<GameObject>();
         
         //List to store tile positions that need collapsing
@@ -90,13 +90,11 @@ namespace Wave_Function_Collapse.Scripts
         {
             for (int i = 0; i < nodeOffsets.Length; i++)
             {
-                // potentialNodes = new List<Tile>(allPossibleNodes);
                 Vector3Int neighborGridSpot = new Vector3Int(x + nodeOffsets[i].x, 0, z + nodeOffsets[i].z);
 
                 if (IsNeighorNodeInsideGrid(neighborGridSpot))
                 {
                     Tile neighborTile = grid[neighborGridSpot.x, neighborGridSpot.z];
-                    
                     
                     if (neighborTile != null)
                         ReducePossibleNodeOptionsForThisNeighborNode(potentialNodes, neighborTile, i);
@@ -105,18 +103,19 @@ namespace Wave_Function_Collapse.Scripts
                             nodesToCollapse.Add(neighborGridSpot);
                     
                     if(potentialNodes.Count == 0)
-                        Debug.LogError($"Just tried to add a node without a potentialNode.  NeighborNode: {neighborTile.name}.");
-                    GetNodeForPlacement(potentialNodes, x, z);
+                        Debug.LogError($"PotentialNodes just hit 0 records.  NeighborTile: {neighborTile}");
                 }
             }
+            
+            GetNodeForPlacement(potentialNodes, x, z);
         }
 
         private void GetNodeForPlacement(List<Tile> potentialNodes, int x, int z)
         {
             if (potentialNodes.Count < 1)
             {
-                grid[x, z] = allPossibleNodes[0];
-                Debug.LogWarning(("Attempted to collapse wave, but found no compatibae nodes"));
+                grid[x, z] = errorNode;
+                Debug.LogWarning(($"Attempted to collapse wave, but found no compatible nodes for grid position x: {x}, z: {z}."));
             }
             else
             {
@@ -130,16 +129,16 @@ namespace Wave_Function_Collapse.Scripts
             switch (i)
             {
                 case 0:
-                    ReduceNodeOptions(potentialNodes, neighborTile.Back.CompatibleNodes);
+                    ReduceNodeOptions(potentialNodes, neighborTile.South);
                     break;
                 case 1:
-                    ReduceNodeOptions(potentialNodes, neighborTile.Forward.CompatibleNodes);
+                    ReduceNodeOptions(potentialNodes, neighborTile.North);
                     break;
                 case 2:
-                    ReduceNodeOptions(potentialNodes, neighborTile.Left.CompatibleNodes);
+                    ReduceNodeOptions(potentialNodes, neighborTile.East);
                     break;
                 case 3:
-                    ReduceNodeOptions(potentialNodes, neighborTile.Right.CompatibleNodes);
+                    ReduceNodeOptions(potentialNodes, neighborTile.West);
                     break;
             }
         }

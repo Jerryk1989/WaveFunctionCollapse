@@ -14,19 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: right-Bld_Corner
   Prefab: {fileID: 7661712046029891250, guid: 8d0c531435d99724aa3217e019cf29f4, type: 3}
-  Forward:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 56d7c2da75e90e047b305d3e185e5094, type: 2}
-  Back:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 1b036f20caea1fd4597380aef069ce12, type: 2}
-    - {fileID: 11400000, guid: ea0dd91de2764df468d5276bd6230218, type: 2}
-    - {fileID: 11400000, guid: 453e92743185f7e44b30d1d2b30e3f05, type: 2}
-  Left:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 9f6e32cb516de304a9063a891096b18b, type: 2}
-    - {fileID: 11400000, guid: 6f6869768386a2e4fa348d7e412b3e5e, type: 2}
-    - {fileID: 11400000, guid: 1d6a759a3f19966409e4c00180d1bbba, type: 2}
-  Right:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 7842126eb7df5ea44a89372a3d99f9d1, type: 2}
+  North:
+  - {fileID: 11400000, guid: 56d7c2da75e90e047b305d3e185e5094, type: 2}
+  South:
+  - {fileID: 11400000, guid: 1b036f20caea1fd4597380aef069ce12, type: 2}
+  - {fileID: 11400000, guid: ea0dd91de2764df468d5276bd6230218, type: 2}
+  - {fileID: 11400000, guid: 453e92743185f7e44b30d1d2b30e3f05, type: 2}
+  East:
+  - {fileID: 11400000, guid: 9f6e32cb516de304a9063a891096b18b, type: 2}
+  - {fileID: 11400000, guid: 6f6869768386a2e4fa348d7e412b3e5e, type: 2}
+  - {fileID: 11400000, guid: 1d6a759a3f19966409e4c00180d1bbba, type: 2}
+  West:
+  - {fileID: 11400000, guid: 7842126eb7df5ea44a89372a3d99f9d1, type: 2}

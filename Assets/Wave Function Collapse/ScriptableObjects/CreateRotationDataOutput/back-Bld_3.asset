@@ -14,23 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: back-Bld_3
   Prefab: {fileID: 6672764496678457747, guid: be3484e957c886e4d8fbf19db34ad08d, type: 3}
-  Forward:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 9f6e32cb516de304a9063a891096b18b, type: 2}
-    - {fileID: 11400000, guid: 6f6869768386a2e4fa348d7e412b3e5e, type: 2}
-    - {fileID: 11400000, guid: 1d6a759a3f19966409e4c00180d1bbba, type: 2}
-  Back:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 2567956a63a8bc148ac5e7481a6bd4bf, type: 2}
-  Left:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: b83c79c4c9effe1448a096fc26fa888f, type: 2}
-    - {fileID: 11400000, guid: a3a149ee046e8184d94f7623b6469c01, type: 2}
-    - {fileID: 11400000, guid: 0c3b3a53c139adb4a8e2b83a4ec47f5b, type: 2}
-    - {fileID: 11400000}
-  Right:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 20d03edd709598a4da329af877f6ba81, type: 2}
-    - {fileID: 11400000, guid: a3a149ee046e8184d94f7623b6469c01, type: 2}
-    - {fileID: 11400000, guid: 0c3b3a53c139adb4a8e2b83a4ec47f5b, type: 2}
-    - {fileID: 11400000}
+  North:
+  - {fileID: 11400000, guid: 9f6e32cb516de304a9063a891096b18b, type: 2}
+  - {fileID: 11400000, guid: 6f6869768386a2e4fa348d7e412b3e5e, type: 2}
+  - {fileID: 11400000, guid: 1d6a759a3f19966409e4c00180d1bbba, type: 2}
+  South:
+  - {fileID: 11400000, guid: 2567956a63a8bc148ac5e7481a6bd4bf, type: 2}
+  East:
+  - {fileID: 11400000, guid: b83c79c4c9effe1448a096fc26fa888f, type: 2}
+  - {fileID: 11400000, guid: a3a149ee046e8184d94f7623b6469c01, type: 2}
+  - {fileID: 11400000, guid: 0c3b3a53c139adb4a8e2b83a4ec47f5b, type: 2}
+  - {fileID: 11400000}
+  West:
+  - {fileID: 11400000, guid: 20d03edd709598a4da329af877f6ba81, type: 2}
+  - {fileID: 11400000, guid: a3a149ee046e8184d94f7623b6469c01, type: 2}
+  - {fileID: 11400000, guid: 0c3b3a53c139adb4a8e2b83a4ec47f5b, type: 2}
+  - {fileID: 11400000}

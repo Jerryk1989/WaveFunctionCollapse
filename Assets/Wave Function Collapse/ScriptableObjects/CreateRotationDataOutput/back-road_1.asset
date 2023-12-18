@@ -14,19 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: back-road_1
   Prefab: {fileID: 1883790663601703238, guid: 70783d1691cfddb4e9def7e3b519ba3c, type: 3}
-  Forward:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 2567956a63a8bc148ac5e7481a6bd4bf, type: 2}
-  Back:
-    CompatibleNodes:
-    - {fileID: 11400000, guid: 9f6e32cb516de304a9063a891096b18b, type: 2}
-    - {fileID: 11400000, guid: 6f6869768386a2e4fa348d7e412b3e5e, type: 2}
-    - {fileID: 11400000, guid: 1d6a759a3f19966409e4c00180d1bbba, type: 2}
-  Left:
-    CompatibleNodes:
-    - {fileID: 11400000}
-    - {fileID: 11400000, guid: 281a361fd1ed983458c8215627c63abe, type: 2}
-  Right:
-    CompatibleNodes:
-    - {fileID: 11400000}
-    - {fileID: 11400000, guid: 70913668bfae8d441a1ebb0669fa65da, type: 2}
+  North:
+  - {fileID: 11400000, guid: 2567956a63a8bc148ac5e7481a6bd4bf, type: 2}
+  South:
+  - {fileID: 11400000, guid: 9f6e32cb516de304a9063a891096b18b, type: 2}
+  - {fileID: 11400000, guid: 6f6869768386a2e4fa348d7e412b3e5e, type: 2}
+  - {fileID: 11400000, guid: 1d6a759a3f19966409e4c00180d1bbba, type: 2}
+  East:
+  - {fileID: 11400000}
+  - {fileID: 11400000, guid: 281a361fd1ed983458c8215627c63abe, type: 2}
+  West:
+  - {fileID: 11400000}
+  - {fileID: 11400000, guid: 70913668bfae8d441a1ebb0669fa65da, type: 2}

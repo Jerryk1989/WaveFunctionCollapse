@@ -27,6 +27,19 @@ namespace Wave_Function_Collapse.Scripts
             {
                 CreateWaveFunctionCollapseTesterButton((WaveFunctionCollapse) script);
             }
+            
+            if (script is MyWFC)
+            {
+                CreateMyWFCTesterButton((MyWFC) script);
+            }
+        }
+
+        private void CreateMyWFCTesterButton(MyWFC script)
+        {
+            if (GUILayout.Button(("Create Grid")))
+            {
+                script.Start();
+            }
         }
 
         private void CreateWaveFunctionCollapseTesterButton(WaveFunctionCollapse script)
