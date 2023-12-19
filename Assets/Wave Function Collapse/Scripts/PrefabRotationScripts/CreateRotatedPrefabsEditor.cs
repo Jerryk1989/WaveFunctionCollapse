@@ -38,7 +38,7 @@ namespace Wave_Function_Collapse.Scripts
         {
             if (GUILayout.Button(("Create Grid")))
             {
-                script.Start();
+                script.TestingWaveFunctionCollapse();
             }
         }
 

@@ -164,10 +164,10 @@ namespace Wave_Function_Collapse.Scripts
 
         private void PopulateValidIntersectionNeighbors(GameObject prefab, string prefabDirection, Tile currentTile)
         {
-            List<GameObject> forwardObjects = new List<GameObject>();
-            List<GameObject> backObjects = new List<GameObject>();
-            List<GameObject> rightObjects = new List<GameObject>();
-            List<GameObject> leftObjects = new List<GameObject>();
+            List<GameObject> northObjects = new List<GameObject>();
+            List<GameObject> southObjects = new List<GameObject>();
+            List<GameObject> eastObjects = new List<GameObject>();
+            List<GameObject> westObjects = new List<GameObject>();
             
             //Get all the objects by their different grouping
             var roads = prefabGroupingDictionary.Where(x => x.Key.ToLower() == "road").Select(x => x.Value).FirstOrDefault();
@@ -175,55 +175,55 @@ namespace Wave_Function_Collapse.Scripts
             
             if (prefabDirection == forward)
             {
-                forwardObjects.AddRange(intersections.Where(x => x.name.StartsWith(right)).ToList());
+                northObjects.AddRange(intersections.Where(x => x.name.StartsWith(right)).ToList());
                 
-                backObjects.AddRange(roads.Where(x => x.name.StartsWith(left)).ToList());
+                southObjects.AddRange(roads.Where(x => x.name.StartsWith(left)).ToList());
                 
-                rightObjects.AddRange(intersections.Where(x => x.name.StartsWith(left)).ToList());
+                eastObjects.AddRange(intersections.Where(x => x.name.StartsWith(left)).ToList());
                 
-                leftObjects.AddRange(roads.Where(x => x.name.StartsWith(back)).ToList());
+                westObjects.AddRange(roads.Where(x => x.name.StartsWith(back)).ToList());
 
                 //This just updates the currentNode we are looking at with the new Node lists
-                UpdateNode(forwardObjects, backObjects, rightObjects, leftObjects, currentTile);
+                UpdateNode(northObjects, southObjects, eastObjects, westObjects, currentTile);
             }
             else if (prefabDirection == left)
             {
-                forwardObjects.AddRange(intersections.Where(x => x.name.StartsWith(back)).ToList());
+                northObjects.AddRange(intersections.Where(x => x.name.StartsWith(back)).ToList());
                 
-                backObjects.AddRange(roads.Where(x => x.name.StartsWith(right)).ToList());
+                southObjects.AddRange(roads.Where(x => x.name.StartsWith(right)).ToList());
                 
-                rightObjects.AddRange(roads.Where(x => x.name.StartsWith(back)).ToList());
+                eastObjects.AddRange(roads.Where(x => x.name.StartsWith(back)).ToList());
                 
-                leftObjects.AddRange(intersections.Where(x => x.name.StartsWith(forward)).ToList());
+                westObjects.AddRange(intersections.Where(x => x.name.StartsWith(forward)).ToList());
                 
                 //This just updates the currentNode we are looking at with the new Node lists
-                UpdateNode(forwardObjects, backObjects, rightObjects, leftObjects, currentTile);
+                UpdateNode(northObjects, southObjects, eastObjects, westObjects, currentTile);
             }
             else if (prefabDirection == right)
             {
-                forwardObjects.AddRange(roads.Where(x => x.name.StartsWith(left)).ToList());
+                northObjects.AddRange(roads.Where(x => x.name.StartsWith(left)).ToList());
                 
-                backObjects.AddRange(intersections.Where(x => x.name.StartsWith(forward)).ToList());
+                southObjects.AddRange(intersections.Where(x => x.name.StartsWith(forward)).ToList());
                 
-                rightObjects.AddRange(intersections.Where(x => x.name.StartsWith(back)).ToList());
+                eastObjects.AddRange(intersections.Where(x => x.name.StartsWith(back)).ToList());
                 
-                leftObjects.AddRange(roads.Where(x => x.name.StartsWith(forward)).ToList());
+                westObjects.AddRange(roads.Where(x => x.name.StartsWith(forward)).ToList());
 
                 //This just updates the currentNode we are looking at with the new Node lists
-                UpdateNode(forwardObjects, backObjects, rightObjects, leftObjects, currentTile);
+                UpdateNode(northObjects, southObjects, eastObjects, westObjects, currentTile);
             }
             else if (prefabDirection == back)
             {
-                forwardObjects.AddRange(roads.Where(x => x.name.StartsWith(right)).ToList());
+                northObjects.AddRange(roads.Where(x => x.name.StartsWith(right)).ToList());
                 
-                backObjects.AddRange(intersections.Where(x => x.name.StartsWith(left)).ToList());
+                southObjects.AddRange(intersections.Where(x => x.name.StartsWith(left)).ToList());
                 
-                rightObjects.AddRange(roads.Where(x => x.name.StartsWith(forward)).ToList());
+                eastObjects.AddRange(roads.Where(x => x.name.StartsWith(forward)).ToList());
                 
-                leftObjects.AddRange(intersections.Where(x => x.name.StartsWith(right)).ToList());
+                westObjects.AddRange(intersections.Where(x => x.name.StartsWith(right)).ToList());
 
                 //This just updates the currentNode we are looking at with the new Node lists
-                UpdateNode(forwardObjects, backObjects, rightObjects, leftObjects, currentTile);
+                UpdateNode(northObjects, southObjects, eastObjects, westObjects, currentTile);
             }
         }
 
@@ -238,10 +238,13 @@ namespace Wave_Function_Collapse.Scripts
             var roads = prefabGroupingDictionary.Where(x => x.Key.ToLower() == "road").Select(x => x.Value).FirstOrDefault();
             var buildings = prefabGroupingDictionary.Where(x => x.Key.ToLower() == "building").Select(x => x.Value).FirstOrDefault();
             var intersections = prefabGroupingDictionary.Where(x => x.Key.ToLower() == "intersection").Select(x => x.Value).FirstOrDefault();
+            var corners = prefabGroupingDictionary.Where(x => x.Key.ToLower() == "corner").Select(x => x.Value).FirstOrDefault();
             
             if (prefabDirection == forward)
             {
                 forwardObjects.AddRange(buildings.Where(x => x.name.StartsWith(back)).ToList());
+                forwardObjects.AddRange(corners.Where(x => x.name.StartsWith(back)).ToList());
+                forwardObjects.AddRange(corners.Where(x => x.name.StartsWith(left)).ToList());
                 
                 backObjects.AddRange(roads.Where(x => x.name.StartsWith(back)).ToList());
                 
@@ -265,6 +268,8 @@ namespace Wave_Function_Collapse.Scripts
                 rightObjects.AddRange(roads.Where(x => x.name.StartsWith(right)).ToList());
                 
                 leftObjects.AddRange(buildings.Where(x => x.name.StartsWith(right)).ToList());
+                leftObjects.AddRange(corners.Where(x => x.name.StartsWith(back)).ToList());
+                leftObjects.AddRange(corners.Where(x => x.name.StartsWith(right)).ToList());
                 
                 //This just updates the currentNode we are looking at with the new Node lists
                 UpdateNode(forwardObjects, backObjects, rightObjects, leftObjects, currentTile);
@@ -280,6 +285,9 @@ namespace Wave_Function_Collapse.Scripts
                 leftObjects.AddRange(roads.Where(x => x.name.StartsWith(left)).ToList());
                 
                 rightObjects.AddRange(buildings.Where(x => x.name.StartsWith(left)).ToList());
+                rightObjects.AddRange(corners.Where(x => x.name.StartsWith(left)).ToList());
+                rightObjects.AddRange(corners.Where(x => x.name.StartsWith(forward)).ToList());
+                
 
                 //This just updates the currentNode we are looking at with the new Node lists
                 UpdateNode(forwardObjects, backObjects, rightObjects, leftObjects, currentTile);
@@ -289,6 +297,8 @@ namespace Wave_Function_Collapse.Scripts
                 forwardObjects.AddRange(roads.Where(x => x.name.StartsWith(forward)).ToList());
                 
                 backObjects.AddRange(buildings.Where(x => x.name.StartsWith(forward)).ToList());
+                backObjects.AddRange(corners.Where(x => x.name.StartsWith(right)).ToList());
+                backObjects.AddRange(corners.Where(x => x.name.StartsWith(forward)).ToList());
                 
                 rightObjects.AddRange(roads.Where(x => x.name.StartsWith(back)).ToList());
                 rightObjects.AddRange(intersections.Where(x => x.name.StartsWith(forward)).ToList());
@@ -311,14 +321,17 @@ namespace Wave_Function_Collapse.Scripts
             //Get all the objects by their different grouping
             var roads = prefabGroupingDictionary.Where(x => x.Key.ToLower() == "road").Select(x => x.Value).FirstOrDefault();
             var buildings = prefabGroupingDictionary.Where(x => x.Key.ToLower() == "building").Select(x => x.Value).FirstOrDefault();
+            var corners = prefabGroupingDictionary.Where(x => x.Key.ToLower() == "corner").Select(x => x.Value).FirstOrDefault();
 
             if (prefabDirection == forward)
             {
                 forwardObjects.AddRange(roads.Where(x => x.name.StartsWith(back)).ToList());
                 
                 backObjects.AddRange(buildings.Where(x => x.name.StartsWith(left)).ToList());
+                backObjects.AddRange(corners.Where(x => x.name.StartsWith(left)).ToList());
                 
                 rightObjects.AddRange(buildings.Where(x => x.name.StartsWith(forward)).ToList());
+                rightObjects.AddRange(corners.Where(x => x.name.StartsWith(right)).ToList());
                 
                 leftObjects.AddRange(roads.Where(x => x.name.StartsWith(right)).ToList());
 
@@ -328,10 +341,12 @@ namespace Wave_Function_Collapse.Scripts
             else if (prefabDirection == left)
             {
                 forwardObjects.AddRange(buildings.Where(x => x.name.StartsWith(left)).ToList());
+                forwardObjects.AddRange(corners.Where(x => x.name.StartsWith(forward)).ToList());
                 
                 backObjects.AddRange(roads.Where(x => x.name.StartsWith(forward)).ToList());
-                
+
                 rightObjects.AddRange(buildings.Where(x => x.name.StartsWith(back)).ToList());
+                rightObjects.AddRange(corners.Where(x => x.name.StartsWith(back)).ToList());
                 
                 leftObjects.AddRange(roads.Where(x => x.name.StartsWith(right)).ToList());
                 
@@ -343,10 +358,12 @@ namespace Wave_Function_Collapse.Scripts
                 forwardObjects.AddRange(roads.Where(x => x.name.StartsWith(back)).ToList());
                 
                 backObjects.AddRange(buildings.Where(x => x.name.StartsWith(right)).ToList());
+                backObjects.AddRange(corners.Where(x => x.name.StartsWith(back)).ToList());
                 
                 rightObjects.AddRange(roads.Where(x => x.name.StartsWith(left)).ToList());
                 
                 leftObjects.AddRange(buildings.Where(x => x.name.StartsWith(forward)).ToList());
+                leftObjects.AddRange(corners.Where(x => x.name.StartsWith(forward)).ToList());
 
                 //This just updates the currentNode we are looking at with the new Node lists
                 UpdateNode(forwardObjects, backObjects, rightObjects, leftObjects, currentTile);
@@ -354,12 +371,14 @@ namespace Wave_Function_Collapse.Scripts
             else if (prefabDirection == back)
             {
                 forwardObjects.AddRange(buildings.Where(x => x.name.StartsWith(right)).ToList());
+                forwardObjects.AddRange(corners.Where(x => x.name.StartsWith(right)).ToList());
                 
                 backObjects.AddRange(roads.Where(x => x.name.StartsWith(forward)).ToList());
                 
                 rightObjects.AddRange(roads.Where(x => x.name.StartsWith(left)).ToList());
                 
                 leftObjects.AddRange(buildings.Where(x => x.name.StartsWith(back)).ToList());
+                leftObjects.AddRange(corners.Where(x => x.name.StartsWith(left)).ToList());
 
                 //This just updates the currentNode we are looking at with the new Node lists
                 UpdateNode(forwardObjects, backObjects, rightObjects, leftObjects, currentTile);
@@ -449,8 +468,8 @@ namespace Wave_Function_Collapse.Scripts
             //This chunk just takes the game objects we have found as valid and finds the corresponding nodes.
             currentTile.North = GetNodes(forwardObjects);
             currentTile.South = GetNodes(backObjects);
-            currentTile.West = GetNodes(rightObjects);
-            currentTile.East = GetNodes(leftObjects);
+            currentTile.East = GetNodes(rightObjects);
+            currentTile.West = GetNodes(leftObjects);
 
             //Now we just need to save our changes for our current node (scriptable object)
             EditorUtility.SetDirty(currentTile);

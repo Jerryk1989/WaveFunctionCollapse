@@ -14,9 +14,32 @@ public class MyWFC : MonoBehaviour
     public List<Tile> tiles;
 
     private List<Cell> cells;
+    private List<GameObject> objectsInstantiated = new List<GameObject>();
+    private List<Cell> insantiatedCells = new List<Cell>();
+    
+    public void TestingWaveFunctionCollapse()
+    {
+        foreach (var item in objectsInstantiated)
+        {
+            DestroyImmediate(item);
+        }
+        
+        foreach (var item in insantiatedCells)
+        {
+            DestroyImmediate(item);
+        }
+            
+        objectsInstantiated.Clear();
+        insantiatedCells.Clear();
+            
+        Start();
+    }
     
     public void Start()
     {
+        Debug.LogWarning("***************************************************************");
+        Debug.LogWarning("STARTING NEW CREATION SEQUENCE");
+        Debug.LogWarning("***************************************************************");
         cells = new List<Cell>();
         
         //Create the grid and populate each spot with a cell.
@@ -27,11 +50,10 @@ public class MyWFC : MonoBehaviour
                 Cell newCell = Instantiate(cellObject, new Vector3(x, 0f, z), Quaternion.identity);
                 newCell.CreateCell(false, tiles);
                 cells.Add(newCell);
+                insantiatedCells.Add(newCell);
             }
         }
-        
-        //ChooseAndCreateTheFirstTile();
-        
+ 
         Cell currentCell = GetNextCellWithLowestOptions();
         Tile currentTile = PickTileAndCollapseCell(currentCell);
         ReduceNeighborCellTileOptions(currentCell, currentTile);
@@ -46,18 +68,18 @@ public class MyWFC : MonoBehaviour
         CleanUpCells();
     }
 
-    private void ChooseAndCreateTheFirstTile()
+    private void LogCurrentTile(Tile tile, Cell cell)
     {
-        //On the first cell it should just get a random starting cell since they all have the same tileoption count right now.
-        Cell currentCell = GetNextCellWithLowestOptions();
-        
-        //Pick a random valid tile, instantiate it, collapse the cell.
-        Tile currentTile = PickTileAndCollapseCell(currentCell);
-        
-        //GetNeighbor cells
-        ReduceNeighborCellTileOptions(currentCell, currentTile);
+        var items = string.Join(", ", cell.tileOptions);
+        Debug.LogWarning($"Current tile being placed is {tile} at x: {cell.transform.position.x} and z: {cell.transform.position.z}.  It's tile choices were {items}.");
     }
-
+    
+    private void LogTileOptionsForTile(Tile tile, List<Tile> tileOptions, string direction)
+    {
+        var items = string.Join(", ", tileOptions);
+        Debug.LogWarning($"The Tile {direction} has tileOptions of {items}.  This decision is coming from {tile}.");
+    }
+    
     private void CleanUpCells()
     {
         foreach (var cell in cells)
@@ -69,67 +91,135 @@ public class MyWFC : MonoBehaviour
     private Tile PickTileAndCollapseCell(Cell currentCell)
     {
         Tile chosenTile = currentCell.tileOptions[Random.Range(0, currentCell.tileOptions.Count)];
-        Instantiate(chosenTile.Prefab, currentCell.transform.position, chosenTile.Prefab.transform.rotation);
+        objectsInstantiated.Add(Instantiate(chosenTile.Prefab, currentCell.transform.position, chosenTile.Prefab.transform.rotation));
 
+        currentCell.tileOptions = new List<Tile>() {chosenTile};
         currentCell.isCollapsed = true;
 
+        LogCurrentTile(chosenTile, currentCell);
+            
         return chosenTile;
     }
-
+    
     private void ReduceNeighborCellTileOptions(Cell currentCell, Tile currentTile)
     {
         List<Cell> neighborCellsForCurrentCell = new List<Cell>();
         var currentCellPosition = currentCell.transform.position;
         
         //North
-        Cell northCell = GetUncollapsedCellAtPosition(currentCellPosition.x, currentCellPosition.z + tileXAndZSize);
+        Cell northCell = GetCellAtPosition(currentCellPosition.x, currentCellPosition.z + tileXAndZSize);
+        Cell southCell = GetCellAtPosition(currentCellPosition.x, currentCellPosition.z - tileXAndZSize);
+        Cell eastCell = GetCellAtPosition(currentCellPosition.x + tileXAndZSize, currentCellPosition.z);
+        Cell westCell = GetCellAtPosition(currentCellPosition.x - tileXAndZSize, currentCellPosition.z);
+    
+        if (northCell != null && !northCell.isCollapsed && CheckIfCellIsWithinGrid(northCell))
+        {
+            ReduceTileOptions(northCell, currentCell.tileOptions[0].North);
+            LogTileOptionsForTile(currentTile, northCell.tileOptions, "north");
+        }
+    
+        if (southCell != null && !southCell.isCollapsed&& CheckIfCellIsWithinGrid(southCell))
+        {
+            ReduceTileOptions(southCell, currentCell.tileOptions[0].North);
+            LogTileOptionsForTile(currentTile, southCell.tileOptions, "south");
+        }
+    
+        if (eastCell != null && !eastCell.isCollapsed&& CheckIfCellIsWithinGrid(eastCell))
+        {
+            ReduceTileOptions(eastCell, currentCell.tileOptions[0].North);
+            LogTileOptionsForTile(currentTile, eastCell.tileOptions, "east");
+        }
         
-        if (northCell != null)
-            ReduceTileOptions(northCell, currentTile.North);
-
-        //South
-        Cell southCell = GetUncollapsedCellAtPosition(currentCellPosition.x, currentCellPosition.z - tileXAndZSize);
-        
-        if (southCell != null)
-            ReduceTileOptions(southCell, currentTile.South);
-        
-        //East
-        Cell eastCell = GetUncollapsedCellAtPosition(currentCellPosition.x + tileXAndZSize, currentCellPosition.z);
-        
-        if (eastCell != null)
-            ReduceTileOptions(eastCell, currentTile.East);
-        
-        //West
-        Cell westCell = GetUncollapsedCellAtPosition(currentCellPosition.x - tileXAndZSize, currentCellPosition.z);
-        
-        if (westCell != null)
-            ReduceTileOptions(westCell, currentTile.West);
+        if (westCell != null && !westCell.isCollapsed&& CheckIfCellIsWithinGrid(westCell))
+        {
+            ReduceTileOptions(westCell, currentCell.tileOptions[0].North);
+            LogTileOptionsForTile(currentTile, westCell.tileOptions, "west");
+        }
     }
 
-    private void ReduceTileOptions(Cell cell, List<Tile> tileOptions)
+    // private void ReduceTileOptions(Cell tileBeingReduced, List<Tile> tileOptionsFromParentCell)
+    // {
+    //     List<Tile> validOptions = tileOptionsFromParentCell;
+    //
+    //     tileBeingReduced.tileOptions = validOptions;
+    // }
+    
+    private void ReduceTileOptions(Cell cell, Tile currentTile)
     {
-        if (cell.tileOptions.Count < tiles.Count)
-        {
-            //Given a 2x2 grid.  The bottom left is the starting point.
-            //right is placed first and in this reduction steps tell the top right corner it can only be 1 thing so that it fits with bottom right.
-            //Up next is top left, which tells top right it can be a few options.  Since bottom right was already collapsed
-            //This needs to find a common object between bottom right and top left to place in the top right.
-            List<Tile> commonTiles = tileOptions.Intersect(cell.tileOptions).ToList();
-            
-            if(!commonTiles.Any())
-                Debug.LogError("There were no common tiles found.  This probably means your scriptable objects aren't setup correctly.");
+        // Get the direct neighbor cells of the current cell
+        List<Cell> neighborCells = GetDirectNeighborCells(cell);
 
-            cell.tileOptions = commonTiles;
+        // Create a list to store the valid options after reduction
+        List<Tile> validOptions = new List<Tile>();
+
+        foreach (var neighborCell in neighborCells)
+        {
+            foreach (Tile option in cell.tileOptions)
+            {
+                Vector3 direction = (neighborCell.transform.position - cell.transform.position).normalized;
+                
+                // Check if the option is compatible with the current tile in the specified direction
+                if (IsOptionCompatibleWithTile(option, currentTile, neighborCell, direction))
+                {
+                    // Check if the option is compatible with the neighboring cells
+                    if (AreOptionsCompatibleWithNeighbors(option, neighborCells))
+                    {
+                        // If both conditions are met, add the option to the validOptions list
+                        validOptions.Add(option);
+                    }
+                }
+            }
         }
+        
+        // Update the tile options for the current cell
+        cell.tileOptions = validOptions;
+    }
+
+    private bool IsOptionCompatibleWithTile(Tile option, Tile currentTile, Cell neighborCell, Vector3 direction)
+    {
+        //This isn't right.
+        if (direction == Vector3.forward)
+        {
+            neighborCell.tileOptions = currentTile.North;
+        }
+        else if (direction == Vector3.back)
+        {
+            neighborCell.tileOptions = currentTile.South;
+        }
+        else if (direction == Vector3.right)
+        {
+            neighborCell.tileOptions = currentTile.East;
+        } 
+        else if (direction == Vector3.left)
+        {
+            neighborCell.tileOptions = currentTile.West;
+        }
+    }
+
+    private List<Cell> GetDirectNeighborCells(Cell cell)
+    {
+        List<Cell> neighborCells = new List<Cell>();
+
+        var currentCellPosition = cell.transform.position;
+        
+        neighborCells.Add(GetCellAtPosition(currentCellPosition.x, currentCellPosition.z + tileXAndZSize));
+        neighborCells.Add(GetCellAtPosition(currentCellPosition.x, currentCellPosition.z - tileXAndZSize));
+        neighborCells.Add(GetCellAtPosition(currentCellPosition.x + tileXAndZSize, currentCellPosition.z));
+        neighborCells.Add(GetCellAtPosition(currentCellPosition.x - tileXAndZSize, currentCellPosition.z));
+
+        neighborCells = neighborCells.Where(c => c != null).ToList();
+
+        return neighborCells;
+    }
+
+    private Cell GetCellAtPosition(float xAxis, float zAxis, bool? isCollapsed = null)
+    {
+        Cell cell = null;
+        
+        if(isCollapsed == null)
+            cell = cells.Where(x => x.transform.position.x == xAxis && x.transform.position.z == zAxis).FirstOrDefault();
         else
-        {
-            cell.tileOptions = tileOptions;
-        }
-    }
-
-    private Cell GetUncollapsedCellAtPosition(float xAxis, float zAxis)
-    {
-        var cell = cells.Where(x => x.transform.position.x == xAxis && x.transform.position.z == zAxis).FirstOrDefault();
+            cell = cells.Where(x => x.transform.position.x == xAxis && x.transform.position.z == zAxis && x.isCollapsed == isCollapsed).FirstOrDefault();
         
         if (cell == null && CheckIfCellIsWithinGrid(xAxis, zAxis))
         {
@@ -142,6 +232,14 @@ public class MyWFC : MonoBehaviour
     private bool CheckIfCellIsWithinGrid(float xAxis, float zAxis)
     {
         if (xAxis > gridWidth || zAxis > gridHeight)
+            return false;
+
+        return true;
+    }
+    
+    private bool CheckIfCellIsWithinGrid(Cell cell)
+    {
+        if (cell.transform.position.x > gridWidth || cell.transform.position.z > gridHeight)
             return false;
 
         return true;
