@@ -37,12 +37,8 @@ public class MyWFC : MonoBehaviour
     
     public void Start()
     {
-        Debug.LogWarning("***************************************************************");
-        Debug.LogWarning("STARTING NEW CREATION SEQUENCE");
-        Debug.LogWarning("***************************************************************");
         cells = new List<Cell>();
         
-        //Create the grid and populate each spot with a cell.
         for (int x = 0; x <= gridWidth; x+=tileXAndZSize)
         {
             for (int z = 0; z <= gridHeight; z+=tileXAndZSize)
@@ -53,33 +49,21 @@ public class MyWFC : MonoBehaviour
                 insantiatedCells.Add(newCell);
             }
         }
- 
+        
         Cell currentCell = GetNextCellWithLowestOptions();
         Tile currentTile = PickTileAndCollapseCell(currentCell);
-        ReduceNeighborCellTileOptions(currentCell, currentTile);
-
+        ReduceTileOptions(currentCell, currentTile);
+        
         while (cells.Any(x => !x.isCollapsed))
         {
             currentCell = GetNextCellWithLowestOptions();
             currentTile = PickTileAndCollapseCell(currentCell);
-            ReduceNeighborCellTileOptions(currentCell, currentTile);
+            ReduceTileOptions(currentCell, currentTile);
         }
         
         CleanUpCells();
     }
 
-    private void LogCurrentTile(Tile tile, Cell cell)
-    {
-        var items = string.Join(", ", cell.tileOptions);
-        Debug.LogWarning($"Current tile being placed is {tile} at x: {cell.transform.position.x} and z: {cell.transform.position.z}.  It's tile choices were {items}.");
-    }
-    
-    private void LogTileOptionsForTile(Tile tile, List<Tile> tileOptions, string direction)
-    {
-        var items = string.Join(", ", tileOptions);
-        Debug.LogWarning($"The Tile {direction} has tileOptions of {items}.  This decision is coming from {tile}.");
-    }
-    
     private void CleanUpCells()
     {
         foreach (var cell in cells)
@@ -96,104 +80,77 @@ public class MyWFC : MonoBehaviour
         currentCell.tileOptions = new List<Tile>() {chosenTile};
         currentCell.isCollapsed = true;
 
-        LogCurrentTile(chosenTile, currentCell);
-            
         return chosenTile;
     }
     
-    private void ReduceNeighborCellTileOptions(Cell currentCell, Tile currentTile)
+    private void ReduceTileOptions(Cell cell, Tile currentTile)
     {
-        List<Cell> neighborCellsForCurrentCell = new List<Cell>();
-        var currentCellPosition = currentCell.transform.position;
+        List<Cell> neighborCells = GetDirectNeighborCells(cell);
+        Debug.LogWarning($"ParentCell: {cell.name}.  ParentCell Location: X: {cell.transform.position.x}, Z: {cell.transform.position.z}.  Parent Cell choice: {currentTile.name}.");
         
-        //North
-        Cell northCell = GetCellAtPosition(currentCellPosition.x, currentCellPosition.z + tileXAndZSize);
-        Cell southCell = GetCellAtPosition(currentCellPosition.x, currentCellPosition.z - tileXAndZSize);
-        Cell eastCell = GetCellAtPosition(currentCellPosition.x + tileXAndZSize, currentCellPosition.z);
-        Cell westCell = GetCellAtPosition(currentCellPosition.x - tileXAndZSize, currentCellPosition.z);
-    
-        if (northCell != null && !northCell.isCollapsed && CheckIfCellIsWithinGrid(northCell))
+        foreach (var neighborCell in neighborCells)
         {
-            ReduceTileOptions(northCell, currentCell.tileOptions[0].North);
-            LogTileOptionsForTile(currentTile, northCell.tileOptions, "north");
-        }
-    
-        if (southCell != null && !southCell.isCollapsed&& CheckIfCellIsWithinGrid(southCell))
-        {
-            ReduceTileOptions(southCell, currentCell.tileOptions[0].North);
-            LogTileOptionsForTile(currentTile, southCell.tileOptions, "south");
-        }
-    
-        if (eastCell != null && !eastCell.isCollapsed&& CheckIfCellIsWithinGrid(eastCell))
-        {
-            ReduceTileOptions(eastCell, currentCell.tileOptions[0].North);
-            LogTileOptionsForTile(currentTile, eastCell.tileOptions, "east");
-        }
-        
-        if (westCell != null && !westCell.isCollapsed&& CheckIfCellIsWithinGrid(westCell))
-        {
-            ReduceTileOptions(westCell, currentCell.tileOptions[0].North);
-            LogTileOptionsForTile(currentTile, westCell.tileOptions, "west");
+            List<Tile> validOptions = new List<Tile>();
+            Vector3 direction = (neighborCell.transform.position - cell.transform.position).normalized;
+            
+            validOptions = CheckTileCompatability(validOptions, neighborCell, currentTile, direction);
+            
+            neighborCell.tileOptions = validOptions;
         }
     }
 
-    // private void ReduceTileOptions(Cell tileBeingReduced, List<Tile> tileOptionsFromParentCell)
-    // {
-    //     List<Tile> validOptions = tileOptionsFromParentCell;
-    //
-    //     tileBeingReduced.tileOptions = validOptions;
-    // }
-    
-    private void ReduceTileOptions(Cell cell, Tile currentTile)
+    private List<Tile> CheckTileCompatability(List<Tile> validOptions, Cell neighborCell, Tile currentTile, Vector3 direction)
     {
-        // Get the direct neighbor cells of the current cell
-        List<Cell> neighborCells = GetDirectNeighborCells(cell);
-
-        // Create a list to store the valid options after reduction
-        List<Tile> validOptions = new List<Tile>();
-
-        foreach (var neighborCell in neighborCells)
+        foreach (Tile option in neighborCell.tileOptions)
         {
-            foreach (Tile option in cell.tileOptions)
+            if (IsOptionCompatibleWithTile(option, currentTile, direction))
             {
-                Vector3 direction = (neighborCell.transform.position - cell.transform.position).normalized;
-                
-                // Check if the option is compatible with the current tile in the specified direction
-                if (IsOptionCompatibleWithTile(option, currentTile, neighborCell, direction))
-                {
-                    // Check if the option is compatible with the neighboring cells
-                    if (AreOptionsCompatibleWithNeighbors(option, neighborCells))
-                    {
-                        // If both conditions are met, add the option to the validOptions list
-                        validOptions.Add(option);
-                    }
-                }
+                validOptions.Add(option);
             }
         }
         
-        // Update the tile options for the current cell
-        cell.tileOptions = validOptions;
+        if(validOptions.Any() == false)
+            Debug.LogError($"No valid options.  Current Tile: {currentTile}.  Neighbor cell options: {string.Join(", ", neighborCell.tileOptions)}.  Neighbor direction: {direction}");
+
+        return validOptions;
     }
 
-    private bool IsOptionCompatibleWithTile(Tile option, Tile currentTile, Cell neighborCell, Vector3 direction)
+    private bool IsOptionCompatibleWithTile(Tile option, Tile currentTile, Vector3 direction)
     {
-        //This isn't right.
         if (direction == Vector3.forward)
         {
-            neighborCell.tileOptions = currentTile.North;
+            if (currentTile.North.Contains(option))
+                return true;
+
+            return false;
         }
-        else if (direction == Vector3.back)
+
+        if (direction == Vector3.back)
         {
-            neighborCell.tileOptions = currentTile.South;
+            if (currentTile.South.Contains(option))
+                return true;
+
+            return false;
         }
-        else if (direction == Vector3.right)
+
+        if (direction == Vector3.right)
         {
-            neighborCell.tileOptions = currentTile.East;
-        } 
-        else if (direction == Vector3.left)
-        {
-            neighborCell.tileOptions = currentTile.West;
+            if (currentTile.East.Contains(option))
+                return true;
+
+            return false;
         }
+
+        if (direction == Vector3.left)
+        {
+            if (currentTile.West.Contains(option))
+                return true;
+
+            return false;
+        }
+        
+        Debug.LogError("There was no directional option found for the tile.");
+        return false;
     }
 
     private List<Cell> GetDirectNeighborCells(Cell cell)
@@ -220,11 +177,9 @@ public class MyWFC : MonoBehaviour
             cell = cells.Where(x => x.transform.position.x == xAxis && x.transform.position.z == zAxis).FirstOrDefault();
         else
             cell = cells.Where(x => x.transform.position.x == xAxis && x.transform.position.z == zAxis && x.isCollapsed == isCollapsed).FirstOrDefault();
-        
-        if (cell == null && CheckIfCellIsWithinGrid(xAxis, zAxis))
-        {
-            Debug.LogError($"Could not find a cell at x position {xAxis} and z position {zAxis}");
-        }
+
+        if (!CheckIfCellIsWithinGrid(xAxis, zAxis))
+            cell = null;
 
         return cell;;
     }
@@ -232,14 +187,6 @@ public class MyWFC : MonoBehaviour
     private bool CheckIfCellIsWithinGrid(float xAxis, float zAxis)
     {
         if (xAxis > gridWidth || zAxis > gridHeight)
-            return false;
-
-        return true;
-    }
-    
-    private bool CheckIfCellIsWithinGrid(Cell cell)
-    {
-        if (cell.transform.position.x > gridWidth || cell.transform.position.z > gridHeight)
             return false;
 
         return true;
@@ -254,16 +201,3 @@ public class MyWFC : MonoBehaviour
         return cellsWithLowestTileOptions[Random.Range(0, cellsWithLowestTileOptions.Count)];
     }
 }
-
-
-//Starting places a tile and updates the tile options for 1 and 2.
-
-//1 and 2 both have a tile count of 1.
-
-//1 is chosen as the next tile to collapse.
-
-//1 collapses and then reduced tile 3 options to something that has 2 tile counts that are valid to touch 1, but maybe not 2.
-
-//now we move to 2 and place the only valid option we had.  3 is then reduced again and it's tileoptions are now whatever 2 says they should be regardless of what 1 wants.
-
-//In order for 3 to work, it needs to find a common ground between 2 and 1.

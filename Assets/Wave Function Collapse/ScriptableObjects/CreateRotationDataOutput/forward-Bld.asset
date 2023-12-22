@@ -10,16 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 26c8bda2317677f4d89687da932d5597, type: 3}
-  m_Name: right-Bld_Corner
+  m_Name: forward-Bld
   m_EditorClassIdentifier: 
-  Name: right-Bld_Corner
-  Prefab: {fileID: 2932350243403915965, guid: 8d0c531435d99724aa3217e019cf29f4, type: 3}
+  Name: forward-Bld
+  Prefab: {fileID: 3810166274544529778, guid: 491e5edc0b1b24e49ae12d847a0a43d0, type: 3}
   North:
-  - {fileID: 11400000, guid: 20d03edd709598a4da329af877f6ba81, type: 2}
+  - {fileID: 11400000, guid: 3a82a559a670bc64489f54d7fdbc8719, type: 2}
   South:
-  - {fileID: 11400000, guid: 20d03edd709598a4da329af877f6ba81, type: 2}
+  - {fileID: 11400000, guid: 3a82a559a670bc64489f54d7fdbc8719, type: 2}
   East:
-  - {fileID: 11400000, guid: 4854627fe5d4bbd43a172df43209182c, type: 2}
+  - {fileID: 11400000, guid: 254badf3f8cadec4aa28c6880be42a6a, type: 2}
   West:
   - {fileID: 11400000, guid: 4854627fe5d4bbd43a172df43209182c, type: 2}
-  - {fileID: 11400000, guid: 2c6d3997fc43edb4da001930d842173f, type: 2}
